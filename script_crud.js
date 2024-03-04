@@ -2,10 +2,18 @@
     const formAdicionarTarefa = document.querySelector('.app__form-add-task')
     const textArea = document.querySelector('.app__form-textarea')
     const ulTarefas = document.querySelector('.app__section-task-list')
-
+    const btnCancelar = document.querySelector('.app__form-footer__button--cancel')
+    const paragrafoDescricaoTarefa = document.querySelector('.app__section-active-task-description')
+    
     // se o JSON.parse não encontrar nada no armazenamento interno do navegador, ele retorna um array vazio
     const tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
     
+    const limparFormulario = () => {
+        textArea.value = ''
+        formularioTarefa.classList.add('hidden')
+    }
+    btnCancelar.addEventListener('click', limparFormulario)
+
     function atualizarTarefas() {
         localStorage.setItem('tarefas', JSON.stringify(tarefas))
     }
@@ -32,7 +40,7 @@
         botao.onclick = () => {
             //debugger
             const novaDescricao = prompt("Qual é o novo nome da tarefa?", tarefa.descricao)
-            console.log('Nova descrição da tarefa: ', novaDescricao)
+            //console.log('Nova descrição da tarefa: ', novaDescricao)
             if (novaDescricao) {
                 p.textContent = novaDescricao //atualizamos o que está na tela
                 tarefa.descricao = novaDescricao //atualizamos o que está no array (nos dados)
@@ -45,6 +53,12 @@
         botao.append(imagemBotao)
 
         li.append(svg, p, botao)
+
+        li.onclick = () => {
+            paragrafoDescricaoTarefa.textContent = tarefa.descricao
+            li.classList.add('app__section-task-list-item-active')
+        }
+
         return li
     }
 
