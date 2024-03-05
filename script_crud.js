@@ -3,11 +3,19 @@
     const textArea = document.querySelector('.app__form-textarea')
     const ulTarefas = document.querySelector('.app__section-task-list')
     const btnCancelar = document.querySelector('.app__form-footer__button--cancel')
+    const btnDeletar = document.querySelector('.app__form-footer__button--delete')
     const paragrafoDescricaoTarefa = document.querySelector('.app__section-active-task-description')
+
+    const btnRemoverConcluidas = document.querySelector('#btn-remover-concluidas')
+    const btnRemoverTodas = document.querySelector('#btn-remover-todas')
     
     // se o JSON.parse não encontrar nada no armazenamento interno do navegador, ele retorna um array vazio
-    const tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
+    let tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
+    let tarefaSelecionada = null
+    let liTarefaSelecionada = null
     
+    
+
     const limparFormulario = () => {
         textArea.value = ''
         formularioTarefa.classList.add('hidden')
@@ -54,9 +62,27 @@
 
         li.append(svg, p, botao)
 
-        li.onclick = () => {
-            paragrafoDescricaoTarefa.textContent = tarefa.descricao
-            li.classList.add('app__section-task-list-item-active')
+        if (tarefa.completa) {
+            li.classList.add('app__section-task-list-item-complete')
+            botao.setAttribute('disabled', true)
+        } else {
+            li.onclick = () => {
+                //debugger
+                document.querySelectorAll('.app__section-task-list-item-active')
+                    .forEach(elemento => {
+                        elemento.classList.remove('app__section-task-list-item-active')
+                    })
+                if (tarefaSelecionada == tarefa) {
+                    paragrafoDescricaoTarefa.textContent = ''
+                    tarefaSelecionada = null
+                    liTarefaSelecionada = null
+                    return
+                }
+                tarefaSelecionada = tarefa
+                liTarefaSelecionada = li
+                paragrafoDescricaoTarefa.textContent = tarefa.descricao
+                li.classList.add('app__section-task-list-item-active')
+            }
         }
 
         return li
@@ -84,3 +110,27 @@
         const elementoTarefa = criarElementoTarefa(tarefa)
         ulTarefas.append(elementoTarefa)
     });
+
+    document.addEventListener('FocoFinalizado', () => {
+        if (tarefaSelecionada && liTarefaSelecionada) {
+            liTarefaSelecionada.classList.remove('app__section-task-list-item-active')
+            liTarefaSelecionada.classList.add('app__section-task-list-item-complete')
+            liTarefaSelecionada.querySelector('button').setAttribute('disabled', true)
+            tarefaSelecionada.completa = true
+            atualizarTarefas()
+        }
+    })
+
+    const removerTarefas = (somenteCompletas) => {
+        // se for somenteCompletas, então remove somente as tarefas completas, se não, remove todas as tarefas
+        const seletor = somenteCompletas ? ".app__section-task-list-item-complete" : ".app__section-task-list-item"
+        document.querySelectorAll(seletor).forEach(elemento => {
+            elemento.remove()
+        })
+        // se for somenteCompletas, ocorre o filtro, se não, retorna um array vazio
+        tarefas = somenteCompletas ? tarefas.filter(tarefa => !tarefa.completa) : []
+        atualizarTarefas()
+    }
+
+    btnRemoverConcluidas.onclick = () => removerTarefas(true)
+    btnRemoverTodas.onclick = () => removerTarefas(false)
