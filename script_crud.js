@@ -14,7 +14,10 @@
     let tarefaSelecionada = null
     let liTarefaSelecionada = null
     
-    
+    const apagarFormulario = () => {
+        
+    }
+    btnDeletar.addEventListener('click', apagarFormulario)
 
     const limparFormulario = () => {
         textArea.value = ''
