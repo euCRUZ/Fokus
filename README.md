@@ -19,9 +19,8 @@ Fokus is a fictional project developed as part of the "Programming for the Web w
 - CSS3 (with Meyer's CSS reset)
 - JavaScript (ES6+)
 
-## How to Use
+## Deploy
 
-1. Clone the repository:
+https://fokus-eucruz.vercel.app/
 
-```bash
-git clone https://github.com/euCRUZ/fokus.git
+
