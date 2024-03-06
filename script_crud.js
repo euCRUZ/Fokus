@@ -3,7 +3,6 @@
     const textArea = document.querySelector('.app__form-textarea')
     const ulTarefas = document.querySelector('.app__section-task-list')
     const btnCancelar = document.querySelector('.app__form-footer__button--cancel')
-    const btnDeletar = document.querySelector('.app__form-footer__button--delete')
     const paragrafoDescricaoTarefa = document.querySelector('.app__section-active-task-description')
 
     const btnRemoverConcluidas = document.querySelector('#btn-remover-concluidas')
@@ -13,15 +12,11 @@
     let tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
     let tarefaSelecionada = null
     let liTarefaSelecionada = null
-    
-    const apagarFormulario = () => {
-        
-    }
-    btnDeletar.addEventListener('click', apagarFormulario)
 
     const limparFormulario = () => {
         textArea.value = ''
-        formularioTarefa.classList.add('hidden')
+        formAdicionarTarefa.classList.add('hidden')
+
     }
     btnCancelar.addEventListener('click', limparFormulario)
 
@@ -87,7 +82,6 @@
                 li.classList.add('app__section-task-list-item-active')
             }
         }
-
         return li
     }
 
@@ -109,10 +103,17 @@
         formAdicionarTarefa.classList.add('hidden')
     })
 
+    textArea.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Enter') {
+            evento.preventDefault(); // Evita que a tecla Enter faça uma quebra de linha no textarea
+            formAdicionarTarefa.dispatchEvent(new Event('submit')); // Dispara o evento de submit do formulário
+        }
+    });
+    
     tarefas.forEach(tarefa => {
         const elementoTarefa = criarElementoTarefa(tarefa)
         ulTarefas.append(elementoTarefa)
-    });
+    })
 
     document.addEventListener('FocoFinalizado', () => {
         if (tarefaSelecionada && liTarefaSelecionada) {
